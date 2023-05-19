@@ -1,0 +1,10 @@
+importlib-metadata # from an error message
+ncbi-datasets-cli
+biopython
+khmer
+numpy
+pandas
+pytest
+screed
+seaborn
+
