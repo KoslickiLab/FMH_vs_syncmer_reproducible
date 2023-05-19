@@ -355,7 +355,6 @@ if __name__ == '__main__':
 	parser.add_argument('-f', '--input_file', type=str, help="Path to file containing genome files to check")
 	parser.add_argument('-k', '--kvalue', type=int, help="k value to use", default=12)
 	parser.add_argument('-s', '--svalue', type=int, help="s value to use", default=8)
-	parser.add_argument('-t', '--shift_value', type=int, help="shift of submer for syncmer", default=0)
 	parser.add_argument('-a', '--fraction_factor', type=int, help="FMH fraction factor, ratio is 1/r", default=5)
 	parser.add_argument('-r', '--rev_comp', type=str, help="Use canonical kmer", default='False')
 	
@@ -366,7 +365,6 @@ if __name__ == '__main__':
 	kvalue = args.kvalue
 	svalue = args.svalue
 	fraction_factor = args.fraction_factor
-	shift_value = args.shift_value
 	
 	rev_comp = args.rev_comp
 	rev_comp = rev_comp == 'True'
@@ -378,7 +376,7 @@ if __name__ == '__main__':
 	###### generate object list
 	object_list = []
 	for file in genome_list:
-		object_list.append(kmer_obj_for_genome(k=kvalue, s=svalue, fraction_factor=fraction_factor, filename=file, shift=shift_value))
+		object_list.append(kmer_obj_for_genome(k=kvalue, s=svalue, fraction_factor=fraction_factor, filename=file))
 	
 	
 	
@@ -476,7 +474,7 @@ if __name__ == '__main__':
 	### step4: check k-mer conservation between k-mer and syncmer
 	test_file = genome_list[0]
 
-	original_obj = kmer_obj_for_genome(k=kvalue, s=svalue, fraction_factor=fraction_factor, filename=test_file, shift=shift_value)
+	original_obj = kmer_obj_for_genome(k=kvalue, s=svalue, fraction_factor=fraction_factor, filename=test_file)
 	seq_list = generate_string_list_from_genome(test_file)
 
 	mut_rate = []
