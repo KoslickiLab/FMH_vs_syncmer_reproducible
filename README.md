@@ -57,7 +57,7 @@ readlink -f brucella_genomes/*.fna > file_paths.txt
 You can also use arbitrary fasta files as input. Store file paths in one file and pass it to the script by "-f" option.
 
 ```
-# we are in the demo folder now
+# assume we are in the demo folder now
 mkdir -p result_random20_Brucella_k20s16ratio5
 cd result_random20_Brucella_k20s16ratio5
 python ../../script/compare_fmh_syncmer_sketches.py -f ../file_paths.txt -k 20 -s 16 -a 5
@@ -80,11 +80,24 @@ More parameters:
 
 
 
+### Check how submer shift affect sketch performance
+
+```
+# assume we are in the demo folder now
+mkdir -p test_submer_shift
+cd test_submer_shift
+python ../../re-test_syncmer_distance_distribution.py -f ../file_paths.txt -k 12 -s 8
+```
+
+Only requires input k and s value besides genome files. This script will compare distance distribution, compression, and sequence coverage of given k and s regarding gradiant shift values from 0 to (k-s)/2
+
+
+
 
 
 ### Results interpretation
 
-List of output files and contents
+List of output files and contents from the main script
 
 | Filename                             | Content                                                      |
 | ------------------------------------ | ------------------------------------------------------------ |
@@ -93,6 +106,16 @@ List of output files and contents
 | out_3_dist_distribution              | Frequency ratio of distance between 2 consecutive seeds      |
 | out_4_compare_conservation_level.csv | Compare mean seed conservation ratio under gradient mutation rates. This step is time consuming, so only applied to the 1st input file. |
 | out_5_weight_dist                    | Compare weight of 2 sketches                                 |
+
+
+
+List of output files and contents from the added script for affection due to submer shift
+
+| Filename                              | Content                              |
+| ------------------------------------- | ------------------------------------ |
+| compression_change_by_shift_k_s_t.csv | Compression ratio by shift value     |
+| coverage_change_by_shift_k_s_t.csv    | Sequence coverate by shift value     |
+| distance_distribution_k_s_t_.csv      | Distance distribution by shift value |
 
 
 
