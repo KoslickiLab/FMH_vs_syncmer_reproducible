@@ -2,9 +2,11 @@
 
 ### Environment setup
 
-Please use conda environment with Python 3.7 to avoid dependency conflicts. Run the following code:
+Please use conda environment with Python 3.7 (for khmer) to avoid dependency conflicts. Run the following code:
 
 ```
+# there are lots of dependency conflicts if build from a yaml file (and will fail). This way is much faster:
+
 conda create -n fmh_vs_syncmer python=3.7
 conda activate fmh_vs_syncmer
 conda install -c conda-forge -c bioconda -c anaconda --file requirements.txt
@@ -49,6 +51,12 @@ rm -r ncbi_dataset*
 rm README.md
 readlink -f brucella_genomes/*.fna > file_paths.txt
 ```
+
+
+
+### Codes below need further adjustment
+
+---
 
 
 

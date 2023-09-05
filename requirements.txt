@@ -7,4 +7,4 @@ pandas
 pytest
 screed
 seaborn
-
+ipython

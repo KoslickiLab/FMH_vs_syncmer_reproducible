@@ -1,4 +1,13 @@
 # ignore the demo folder
 demo/
 
+# ignore the report folder
+report/
+
+# ds_store
+.DS_Store
+
+# output
+output/
+
 
