@@ -9,7 +9,7 @@ Please use conda environment with Python 3.7 (for khmer) to avoid dependency con
 
 conda create -n fmh_vs_syncmer python=3.7
 conda activate fmh_vs_syncmer
-conda install -c conda-forge -c bioconda -c anaconda --file requirements.txt
+conda install -c conda-forge -c bioconda -c anaconda --file ./src/requirements.txt
 ```
 
 
