@@ -43,13 +43,47 @@ GCA_014884585.1
 GCF_002191555.1
 GCF_000480275.1" > rand_20_brucella_genome.txt
 
-datasets download genome accession $(cat rand_20_brucella_genome.txt | tr "\n" "\t" )
+datasets download genome accession $(cat rand_20_brucella_genome.txt | tr "\n" "\t")
 mkdir -p brucella_genomes
 unzip ncbi_dataset.zip
 find . -name "*.fna" | xargs -I{} mv {} ./brucella_genomes
 rm -r ncbi_dataset*
 rm README.md
 readlink -f brucella_genomes/*.fna > file_paths.txt
+
+
+
+# Also 20 random genomes from GTDB
+# cat bac120_taxonomy_r214.tsv | shuf --random-source=<(yes 42) | head -20 | cut -f 1 | sed 's/.*_GC/GC/g'
+
+echo "GCF_017357225.1
+GCF_006349495.1
+GCF_003066435.1
+GCF_002489475.1
+GCF_001219265.1
+GCF_003345515.1
+GCA_014866125.1
+GCF_020740855.1
+GCA_001818815.1
+GCF_000270725.1
+GCF_001496315.1
+GCF_000313715.1
+GCF_022683485.1
+GCF_002038105.1
+GCF_000562565.1
+GCF_002569565.1
+GCF_001726515.1
+GCA_023427405.1
+GCF_900134305.1
+GCF_001493435.1" > rand_20_GTDB_genome.txt
+
+datasets download genome accession $(cat rand_20_GTDB_genome.txt | tr "\n" "\t")
+mkdir -p rand20_gtdb_genomes
+unzip ncbi_dataset.zip
+find ncbi_dataset -name "*.fna" | xargs -I{} mv {} ./rand20_gtdb_genomes
+rm -r ncbi_dataset*
+rm README.md
+readlink -f ./rand20_gtdb_genomes/*.fna > rand20_gtdb_paths.txt
 ```
 
 
