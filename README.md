@@ -77,10 +77,12 @@ readlink -f brucella_genomes/*.fna > file_paths.txt
 ### Generate k-mer sketches and compare the performance of FMH and open syncmers
 
 The default parameters are `k=20, s=11, c=10` and we will use `shift value` from 1 to 5.  
-This step may run ~2h on a single-thread laptop, reducing input genomes (e.g. keep only first 3 records) can make it much faster for testing purpose.
+This step may run ~2h on a single-thread laptop, reducing input genomes (e.g. keep only the first 3 records) can make it much faster for testing purpose.
 
 ```
 # assume we are in the demo folder now
+# if want a faster test run, try:
+# head -2 file_paths.txt > test_file.txt  
 python ../src/reproducible.py -f file_paths.txt -k 20 -s 11 -a 10
 ```
 
