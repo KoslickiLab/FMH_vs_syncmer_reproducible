@@ -1,23 +1,19 @@
-## FracMinHash vs Open syncmer in random seeding
-
+## FracMinHash vs Open syncmers in genomic comparisons
+Reproducible scripts for the manuscript `Connecting Syncmers to FracMinHash: similarities and advantages`. The associated preprint will be added soon.
+</br>
 ### Environment setup
-
-Please use conda environment with Python 3.7 (for khmer) to avoid dependency conflicts. Run the following code:
-
 ```
-# there are lots of dependency conflicts if build from a yaml file (and will fail). This way is much faster:
-
-conda create -n fmh_vs_syncmer python=3.7
+git clone https://github.com/KoslickiLab/FMH_vs_syncmer_reproducible.git
+cd FMH_vs_syncmer_reproducible
+conda create -n fmh_vs_syncmer
 conda activate fmh_vs_syncmer
 conda install -c conda-forge -c bioconda -c anaconda --file ./src/requirements.txt
 ```
-
-
+</br>
 
 ### Download random genomes for comparison
-
 ```
-# Here are 20 random Brucella rep genomes from GTDB r214 here: https://data.gtdb.ecogenomic.org/releases/release214/214.0/
+# Here are 20 random Brucella representative genomes from GTDB r214: https://data.gtdb.ecogenomic.org/releases/release214/214.0/
 # grep Brucella bac120_taxonomy_r214.tsv | shuf --random-source=<(yes 42) | head -20 | cut -f 1 | sed 's/.*_GC/GC/g'
 
 mkdir -p demo
@@ -50,114 +46,67 @@ find . -name "*.fna" | xargs -I{} mv {} ./brucella_genomes
 rm -r ncbi_dataset*
 rm README.md
 readlink -f brucella_genomes/*.fna > file_paths.txt
-
-
-
-# Also 20 random genomes from GTDB
-# cat bac120_taxonomy_r214.tsv | shuf --random-source=<(yes 42) | head -20 | cut -f 1 | sed 's/.*_GC/GC/g'
-
-echo "GCF_017357225.1
-GCF_006349495.1
-GCF_003066435.1
-GCF_002489475.1
-GCF_001219265.1
-GCF_003345515.1
-GCA_014866125.1
-GCF_020740855.1
-GCA_001818815.1
-GCF_000270725.1
-GCF_001496315.1
-GCF_000313715.1
-GCF_022683485.1
-GCF_002038105.1
-GCF_000562565.1
-GCF_002569565.1
-GCF_001726515.1
-GCA_023427405.1
-GCF_900134305.1
-GCF_001493435.1" > rand_20_GTDB_genome.txt
-
-datasets download genome accession $(cat rand_20_GTDB_genome.txt | tr "\n" "\t")
-mkdir -p rand20_gtdb_genomes
-unzip ncbi_dataset.zip
-find ncbi_dataset -name "*.fna" | xargs -I{} mv {} ./rand20_gtdb_genomes
-rm -r ncbi_dataset*
-rm README.md
-readlink -f ./rand20_gtdb_genomes/*.fna > rand20_gtdb_paths.txt
 ```
 
+</br>
 
+### Generate k-mer sketches and compare the performance of FMH and open syncmers
+The default parameters are `k=20, s=11, c=10` and we will use `shift value` from 1 to 5.  
+This step may run ~2h on a single-thread laptop, reducing input genomes (e.g. keep only first 3 records) can make it much faster for testing purpose.
+```
+# assume we are in the demo folder now
+python ../src/reproducible.py -f file_paths.txt -k 20 -s 11 -a 10
+```
 
-### Codes below need further adjustment
+</br>
+
+### Generate figures based on comparison results  
+We will obtain all results in the previous step, this is the last step and is for visulization.
+```
+# assume we are in the demo folder now
+python ../src/make_figs_for_manuscript.py
+```
+</br>
+</br>
 
 ---
 
-
-
-### Run the main script to generate FMH vs syncmer comparison
-
-You can also use arbitrary fasta files as input. Store file paths in one file and pass it to the script by "-f" option.
-
-```
-# assume we are in the demo folder now
-mkdir -p result_random20_Brucella_k20s16ratio5
-cd result_random20_Brucella_k20s16ratio5
-python ../../script/compare_fmh_syncmer_sketches.py -f ../file_paths.txt -k 20 -s 16 -a 5
-
-cd ..
-mkdir -p result_random20_Brucella_k20s11ratio10
-cd result_random20_Brucella_k20s11ratio10
-python ../../script/compare_fmh_syncmer_sketches.py -f ../file_paths.txt -k 20 -s 11 -a 10
-```
-
-More parameters:
-
+### Parameter explanation and output files
+After running the steps above, you will have a list of output files in the `demo` folder.
+#### Parameters:
 | Parameter | Note                                                         |
 | --------- | ------------------------------------------------------------ |
 | -f        | Input file with paths of all input genomes, one per line     |
-| -k        | k-mer length, default 12                                     |
-| -s        | submer length, default 8                                     |
-| -a        | fraction factor for FracMinHash, default 5. Please make sure k-s+1=a |
-| -r        | use canonical k-mers, default False.                         |
+| -k        | k-mer length, default 20                                     |
+| -s        | submer length, default 11                                     |
+| -a        | fraction factor for FracMinHash, default 10. Please make sure k-s+1=a |
 
+</br>
 
-
-### Check how submer shift affect sketch performance
-
-```
-# assume we are in the demo folder now
-mkdir -p test_submer_shift
-cd test_submer_shift
-python ../../re-test_syncmer_distance_distribution.py -f ../file_paths.txt -k 12 -s 8
-```
-
-Only requires input k and s value besides genome files. This script will compare distance distribution, compression, and sequence coverage of given k and s regarding gradiant shift values from 0 to (k-s)/2
-
-
-
-
-
-### Results interpretation
-
-List of output files and contents from the main script
-
+#### Output files:
+List of output files and contents from the main script.
 | Filename                             | Content                                                      |
 | ------------------------------------ | ------------------------------------------------------------ |
-| out_1_compare_compression_ratio.csv  | Compare sketch compression ratio                             |
-| out_2_compare_jici.csv               | Compare pairwise JI/CI estimated by FMH, syncmer and ground truth |
-| out_3_dist_distribution              | Frequency ratio of distance between 2 consecutive seeds      |
-| out_4_compare_conservation_level.csv | Compare mean seed conservation ratio under gradient mutation rates. This step is time consuming, so only applied to the 1st input file. |
-| out_5_weight_dist                    | Compare weight of 2 sketches                                 |
+| compare_conservation_MOS_s11_mut0.05.csv  | Multi-resolution estimation by MOS                             |
+| compare_conservation_regular_OS_s11_mut0.05.csv               | Multi-resolution estimation by regular open syncmers |
+| compare_jici.csv            | Estimation of Jaccard and containment index by OS and FMH |
+| conservation_change_by_shift_k20s11_mut0.01.csv | K-mer conservation status by FMH and OS |
+| coverage_change_by_shift_k20s11.csv                | Genome coverage status by FMH and OS     |
+| coverage_change_by_shift_k20s11.csv                | Genome coverage status by FMH and OS     |
+| distance_distribution_FMH_k20c10.csv | Frequency distribution of distances between adjacent k-mers in the genome for FMH and OS |
 
+</br>
 
-
-List of output files and contents from the added script for affection due to submer shift
+#### Output figures:
+List of output figures.
 
 | Filename                              | Content                              |
 | ------------------------------------- | ------------------------------------ |
-| compression_change_by_shift_k_s_t.csv | Compression ratio by shift value     |
-| coverage_change_by_shift_k_s_t.csv    | Sequence coverate by shift value     |
-| distance_distribution_k_s_t_.csv      | Distance distribution by shift value |
+| Fig2_compression.png | Figure2: Open syncmer vs FracMinHash: compression ratio and k-mer conservation are consistent. |
+| Fig3_ji_est.png | Figure 3: The open syncmer sketch fits the MinHash algorithm. |
+| Fig4_dist_coverage_compare.png    | Figure 4: Genome coverage and distance distribution |
+| Fig5_mos.png | Figure 5: Multi-resolution open syncmers are comparable to regular open syncmers |
+
 
 
 
