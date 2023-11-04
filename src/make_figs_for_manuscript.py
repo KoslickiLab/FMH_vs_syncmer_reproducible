@@ -167,7 +167,6 @@ def make_fig5_mos(df1, df2):
 	fig.savefig("mos.png", dpi=200)
 	plt.close(fig)
 
-make_fig5_mos(df1=df51, df2=df52)
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description="Syncmer pilot",
