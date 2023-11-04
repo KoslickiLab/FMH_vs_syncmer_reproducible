@@ -401,7 +401,10 @@ if __name__ == '__main__':
 			temp_distance = temp_location[1:] - temp_location[:-1]
 			temp_name = os.path.basename(fasta)
 			# change to freq dist.
-			out_df_distance.append(pd.DataFrame(pd.Series(temp_distance).value_counts(), columns=[temp_name]))
+			temp_df_of_freq = pd.DataFrame(pd.Series(temp_distance).value_counts())  #, columns=[temp_name]
+			# not sure what happened: if I assign colname within the pd.DataFrame command, the df becomes empty
+			temp_df_of_freq.columns = [temp_name]
+			out_df_distance.append(temp_df_of_freq)
 			
 			# compression ratio
 			temp_compression = (len(temp_seq) - kvalue + 1) / len(temp_location) * 1.0
@@ -417,8 +420,7 @@ if __name__ == '__main__':
 		# merge and output distance: this will not be merged with other conditions
 		merged_df_dist = pd.concat(out_df_distance, axis=1)
 		merged_df_dist = clean_dist_distribution_dataframe(merged_df_dist)
-		merged_df_dist.to_csv("distance_distribution_OS_k%ds%dt%d.csv" % (kvalue, svalue, shift_value),  header=True,
-		                      index=True)
+		merged_df_dist.to_csv("distance_distribution_OS_k%ds%dt%d.csv" % (kvalue, svalue, shift_value),  header=True, index=True)
 		# merge to the dict
 		out_df_compression.append(pd.DataFrame(list_compression, index=list_filename, columns=['OS_t'+str(shift_value+1)]))
 		out_df_coverage.append(pd.DataFrame(list_coverage, index=list_filename, columns=['OS_t'+str(shift_value+1)]))
@@ -516,6 +518,7 @@ if __name__ == '__main__':
 
 	################################################################
 	# step3: JI CI estimation
+	print("Step3, get JI CI estimation")
 	# from now on, we use the optimal t value shift_high
 	object_list = []
 	for file in genome_list:
@@ -536,6 +539,7 @@ if __name__ == '__main__':
 	
 	################################################################
 	# step4: multi-resolution on k-mer conservation only
+	print("Step4, MOS comparison")
 	# only compare k-mer conservation
 	kmax = kvalue + 10 # change to 10 later
 	kvalue_list = list(range(kvalue, kmax+1, 2))
