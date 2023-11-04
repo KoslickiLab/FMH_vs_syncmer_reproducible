@@ -42,7 +42,7 @@ def make_fig2_comparession_kmer_conservation(df1, df2):
 	# footer
 	fig.text(0.5, 0.05, 'Sketching conditions', horizontalalignment="center", fontsize=20)
 
-	fig.savefig("compression.png", dpi=200)
+	fig.savefig("Fig2_compression.png", dpi=200)
 	plt.close(fig)
 
 def make_fig3_ciji_comparison(df):
@@ -86,7 +86,7 @@ def make_fig3_ciji_comparison(df):
 	# for i, ax in enumerate(axs):
 	# 	ax.set_title(f'({chr(97 + i)})', pad=20)
 
-	fig.savefig("ji_est.png", dpi=200)
+	fig.savefig("Fig3_ji_est.png", dpi=200)
 	plt.close(fig)
 
 def make_fig4_dist_dist(df1, df2):
@@ -113,7 +113,7 @@ def make_fig4_dist_dist(df1, df2):
 	axs[1].legend(title='Category')
 	axs[1].axvline(x=8, color='red', linestyle='--', label='Average distance')
 	axs[1].legend()
-	fig.savefig("dist_coverage_compare.png", dpi=200)
+	fig.savefig("Fig4_dist_coverage_compare.png", dpi=200)
 	plt.close(fig)
 
 def make_fig5_mos(df1, df2):
@@ -164,7 +164,7 @@ def make_fig5_mos(df1, df2):
 	# footer
 	fig.text(0.5, 0.05, 'Ratio of conserved k-mers by MOS at different lengths', horizontalalignment="center")
 
-	fig.savefig("mos.png", dpi=200)
+	fig.savefig("Fig5_mos.png", dpi=200)
 	plt.close(fig)
 
 
