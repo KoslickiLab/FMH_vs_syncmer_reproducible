@@ -10,13 +10,6 @@ import matplotlib as mpl
 import glob
 from matplotlib.gridspec import GridSpec
 
-def local_variable():
-	"""
-	For test purposes
-	:return:
-	"""
-	input_dir = os.path.abspath('./demo/test_fig')
-
 def make_fig2_comparession_kmer_conservation(df1, df2):
 	"""
 	Make 2 subplots for compression and kmer conservation from df1 and df2, both have index=file, cols = FMH, t1,t2..
@@ -175,7 +168,7 @@ if __name__ == '__main__':
 
 	### read parameters
 	args = parser.parse_args()
-	input_dir = args.inut_dir
+	input_dir = args.input_dir
 	os.chdir(input_dir)
 
 	# Set a global font size for text elements in Matplotlib
