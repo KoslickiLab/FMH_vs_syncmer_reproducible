@@ -353,9 +353,12 @@ if __name__ == '__main__':
 		temp_location = np.array(temp_location)
 		temp_distance = temp_location[1:] - temp_location[:-1]
 		temp_name = os.path.basename(fasta)
-		# change to freq dist.
-		out_df_distance.append(pd.DataFrame(pd.Series(temp_distance).value_counts(), columns=[temp_name]))
-		
+		# change to freq dist. Might be a python version issue, this command doesn't work at py3.8, but works well at 3.10
+		# out_df_distance.append(pd.DataFrame(pd.Series(temp_distance).value_counts(), columns=[temp_name]))
+		temp_df_dist = pd.DataFrame(pd.Series(temp_distance).value_counts())
+		temp_df_dist.columns = [temp_name]
+		out_df_distance.append(temp_df_dist)
+
 		# compression ratio
 		temp_compression = (len(temp_seq) - kvalue + 1) / len(temp_location) * 1.0
 		list_compression.append(temp_compression)
@@ -370,8 +373,7 @@ if __name__ == '__main__':
 	# merge and output distance: this will not be merged with other conditions
 	merged_df_dist = pd.concat(out_df_distance, axis=1)
 	merged_df_dist = clean_dist_distribution_dataframe(merged_df_dist)
-	merged_df_dist.to_csv("distance_distribution_FMH_k%dc%d.csv" % (kvalue, fraction_factor), header=True,
-	                           index=True)
+	merged_df_dist.to_csv("distance_distribution_FMH_k%dc%d.csv" % (kvalue, fraction_factor), header=True, index=True)
 	# merge to the dict
 	out_df_compression.append(pd.DataFrame(list_compression, index=list_filename, columns=['FMH']))
 	out_df_coverage.append(pd.DataFrame(list_coverage, index=list_filename, columns=['FMH']))
