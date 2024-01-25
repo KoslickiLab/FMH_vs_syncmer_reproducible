@@ -94,7 +94,7 @@ def make_fig4_dist_dist(df1, df2):
 	axs[0].set(ylabel="Ratio", xlabel="Condition")
 	# rotate xticks to look better
 	axs[0].tick_params(axis='x', rotation=30)
-	axs[0].set_title('(a) Genome coverage', pad=20)
+	axs[0].set_title('(a) Genome conservation', pad=20)
 	axs[0].set_ylim([0.8, 1])
 
 	# sub2: distance distribution, multiple lines

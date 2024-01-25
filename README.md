@@ -1,9 +1,12 @@
 ## FracMinHash vs Open syncmers in genomic comparisons
+
 Reproducible scripts for the manuscript `Connecting Syncmers to FracMinHash: similarities and advantages`. The associated preprint will be added soon.
 </br>
 
 <!-- TOC start -->
+
 ### Contents:
+
 - [Step1](#environment-setup): environment setup
 - [Step2](#download-random-genomes-for-comparison): download random genomes for comparison
 - [Step3](#generate-k-mer-sketches-and-compare-the-performance-of-fmh-and-open-syncmers): generate k-mer sketches and compare the performance of FMH and open syncmers
@@ -35,39 +38,44 @@ conda install -c conda-forge -c bioconda -c anaconda --file ./src/requirements.t
 ### Download random genomes for comparison
 
 ```
-# Here are 20 random Brucella representative genomes from GTDB r214: https://data.gtdb.ecogenomic.org/releases/release214/214.0/
-# grep Brucella bac120_taxonomy_r214.tsv | shuf --random-source=<(yes 42) | head -20 | cut -f 1 | sed 's/.*_GC/GC/g'
-
 mkdir -p demo
 cd demo
-echo "GCF_000413755.1
-GCF_001866335.1
-GCF_002191835.1
-GCF_000366825.1
-GCF_009733375.1
-GCF_900236485.1
-GCF_002150355.1
-GCA_009733355.1
-GCF_023651275.1
-GCF_000292205.1
-GCF_009664925.1
-GCF_023651255.1
-GCF_000413595.1
-GCF_900236395.1
-GCF_003994435.1
-GCF_006507335.1
-GCA_002291225.1
-GCA_014884585.1
-GCF_002191555.1
-GCF_000480275.1" > rand_20_brucella_genome.txt
 
-datasets download genome accession $(cat rand_20_brucella_genome.txt | tr "\n" "\t")
+# download GTDB taxonomy file
+wget https://data.gtdb.ecogenomic.org/releases/release214/214.0/bac120_taxonomy_r214.tsv
+
+# get 20 brucella genomes
+grep Brucella bac120_taxonomy_r214.tsv | shuf --random-source=<(yes 42) | head -20 | cut -f 1 | sed 's/.*_GC/GC/g' > rand_20_brucella_genome.txt
+
+datasets download genome accession $(cat rand_20_brucella_genome.txt | tr "\n" "\t" )
 mkdir -p brucella_genomes
 unzip ncbi_dataset.zip
 find . -name "*.fna" | xargs -I{} mv {} ./brucella_genomes
 rm -r ncbi_dataset*
 rm README.md
-readlink -f brucella_genomes/*.fna > file_paths.txt
+readlink -f brucella_genomes/*.fna > filepath_20_brucella.txt
+
+
+# get more genomes from randomly selected families
+grep -oP '(?<=;f__)[^;]*(?=;)' bac120_taxonomy_r214.tsv | sort | uniq | sed '/[0-9]/d' > gtdb_family_list.txt
+> rand_genome_list.txt
+for random_family in $(cat gtdb_family_list.txt | shuf --random-source=<(yes 42) | head -50 ); do
+ grep ${random_family} bac120_taxonomy_r214.tsv | shuf --random-source=<(yes 42) | head -10 | cut -f 1 | sed 's/.*_GC/GC/g' >> rand_genome_list.txt 
+done
+
+mkdir -p more_genomes_from_50_families
+cd more_genomes_from_50_families
+datasets download genome accession $(cat ../rand_genome_list.txt | tr "\n" "\t")
+unzip ncbi_dataset.zip
+find . -name "*.fna" | xargs -I{} mv {} .
+rm -r ncbi_dataset*
+rm README.md
+readlink -f *.fna > ../filepath_more_genomes_from_rand_50_families.txt
+cd ..
+
+
+# merge file paths together
+cat filepath_20_brucella.txt filepath_more_genomes_from_rand_50_families.txt > file_paths.txt
 ```
 
 </br>
